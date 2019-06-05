@@ -23,7 +23,7 @@
   shell: apt-get update
 
 - name: final install
-  shell: apt-get install -y docker-ce docker-ce-cli containerd.io
+  shell: apt-get install -y docker-ce docker-ce-cli containerd.io python-pip
 
 - name: install docker-compose
   shell: pip install docker-compose
