@@ -1,0 +1,43 @@
+- name: Remove old {{docker_name}}
+  file:
+    path: ~/{{docker_name}}
+    state: absent
+
+- name: Remove unused images
+  shell: docker image prune -f
+
+- name: Create dir {{docker_name}}
+  file:
+    path: ~/{{docker_name}}
+    state: directory
+
+- name: Copy new docker-compose.yml
+  copy:
+    src: ./docker-compose.yml
+    dest: ~/{{docker_name}}
+
+- name: Copy new {{docker_name}}.docker
+  copy:
+    src: ./{{docker_name}}.docker
+    dest: ~/{{docker_name}}/{{docker_name}}.docker
+
+- name: Load new {{docker_name}}
+  shell: docker load < {{docker_name}}.docker
+  args:
+    chdir: ~/{{docker_name}}
+
+- name: Stop Docker
+  shell: docker container stop {{docker_name}}-server
+  ignore_errors: yes
+
+- name: RM Docker
+  shell: docker container rm {{docker_name}}-server
+  ignore_errors: yes
+
+- name: Exec
+  shell: docker-compose -f docker-compose.yml up -d
+  environment:
+    DOCKER_NAME: '{{docker_name}}'
+    SERVER_NAME: '{{docker_name}}-server'
+  args:
+    chdir: ~/{{docker_name}}
