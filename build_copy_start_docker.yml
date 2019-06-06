@@ -3,9 +3,6 @@
     path: ~/{{docker_name}}
     state: absent
 
-- name: Remove unused images
-  shell: docker image prune -f
-
 - name: Create dir {{docker_name}}
   file:
     path: ~/{{docker_name}}
@@ -41,3 +38,6 @@
     SERVER_NAME: '{{docker_name}}-server'
   args:
     chdir: ~/{{docker_name}}
+
+- name: Remove unused images
+  shell: docker image prune -f
